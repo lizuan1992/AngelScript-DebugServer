@@ -1,0 +1,147 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="add_on">
+      <UniqueIdentifier>{a6ec869d-1d4b-477f-9d23-1e9611ae0844}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="AngelScript DebugServer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptDebugger.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\contextmgr\contextmgr.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\datetime\datetime.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\debugger\debugger.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\scriptany\scriptany.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\scriptarray\scriptarray.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\scriptbuilder\scriptbuilder.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\scriptdictionary\scriptdictionary.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\scriptfile\scriptfile.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\scriptfile\scriptfilesystem.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\scriptgrid\scriptgrid.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\scripthandle\scripthandle.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\scripthelper\scripthelper.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\scriptmath\scriptmath.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\scriptmath\scriptmathcomplex.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\scriptsocket\scriptsocket.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\scriptstdstring\scriptstdstring.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\scriptstdstring\scriptstdstring_utils.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\serializer\serializer.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+    <ClCompile Include="..\angelscript\sdk\add_on\weakref\weakref.cpp">
+      <Filter>add_on</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ScriptDebugger.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\autowrapper\aswrappedcall.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\contextmgr\contextmgr.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\datetime\datetime.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\debugger\debugger.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\scriptany\scriptany.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\scriptarray\scriptarray.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\scriptbuilder\scriptbuilder.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\scriptdictionary\scriptdictionary.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\scriptfile\scriptfile.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\scriptfile\scriptfilesystem.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\scriptgrid\scriptgrid.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\scripthandle\scripthandle.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\scripthelper\scripthelper.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\scriptmath\scriptmath.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\scriptmath\scriptmathcomplex.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\scriptsocket\scriptsocket.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\scriptstdstring\scriptstdstring.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\serializer\serializer.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+    <ClInclude Include="..\angelscript\sdk\add_on\weakref\weakref.h">
+      <Filter>add_on</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

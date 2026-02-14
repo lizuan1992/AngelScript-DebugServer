@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="AngelScriptProject.vcxproj" Id="71e7f75f-3d2e-4380-88bf-571016ccad69" />
+</Solution>
