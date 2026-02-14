@@ -1,4 +1,4 @@
-#include "system.hh"
+#include "system.hh" assume
 
 funcdef int FuncAdd(int a, int b);
 functyp(FuncAdd);

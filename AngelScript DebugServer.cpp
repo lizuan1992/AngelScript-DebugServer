@@ -962,8 +962,10 @@ int main()
 	oss << ifs.rdbuf();
 	std::string codes = oss.str();
 
-	if (auto pos = codes.find("system.hh"); pos != std::string::npos)
+	for (auto pos = codes.find("functyp"); pos != std::string::npos; pos = codes.find("functyp", pos))
 	{
+		codes[pos] = ' ';
+
 		while (pos > 0 && codes[pos] != '\n')
 			pos--;
 
@@ -974,20 +976,10 @@ int main()
 		codes[pos++] = '/';
 	}
 
-	if (auto pos = codes.find("functyp"); pos != std::string::npos)
+	for (auto pos = codes.find("assume"); pos != std::string::npos; pos = codes.find("assume", pos))
 	{
-		while (pos > 0 && codes[pos] != '\n')
-			pos--;
+		codes[pos] = ' ';
 
-		if (codes[pos] == '\n')
-			pos++;
-
-		codes[pos++] = '/';
-		codes[pos++] = '/';
-	}
-
-	if (auto pos = codes.find("assume"); pos != std::string::npos)
-	{
 		while (pos > 0 && codes[pos] != '\n')
 			pos--;
 
