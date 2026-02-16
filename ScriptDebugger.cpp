@@ -1676,7 +1676,7 @@ void RunDebuggerServer(volatile bool& bTerminated, uint16_t uServerPort)
 				ss << remainData;
 				ss << recvBuffer;
 
-				while (ss.str().find('\n') != std::string::npos && std::getline(ss, line))
+				while (ss.str().find('\n', ss.tellg()) != std::string::npos && std::getline(ss, line))
 				{
 #ifdef _DEBUG
 					gDbgSvr.outputDebugText("echo", line);
@@ -1684,7 +1684,7 @@ void RunDebuggerServer(volatile bool& bTerminated, uint16_t uServerPort)
 					HandleCommandFromVSX(line);
 				}
 
-				remainData = ss.str();
+				remainData = ss.str().substr(ss.tellg());
 			}
 		}
 	}
