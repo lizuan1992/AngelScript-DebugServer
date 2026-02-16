@@ -123,7 +123,8 @@ static std::string getVariableValue(void* ptr, int typeId, asIScriptEngine* engi
 			{
 				asINT64 enumVal;
 				const char* enumName = t->GetEnumValueByIndex(n, &enumVal);
-				if (enumVal == *(asINT64*)ptr)
+				auto _enumVal = *(asINT32*)ptr;
+				if (enumVal == _enumVal)
 					return std::format("{}({})", enumName, enumVal);
 			}
 		}
@@ -999,7 +1000,7 @@ int main()
 	module->AddScriptSection(module_file.c_str(), codes.c_str(), codes.size());
 	if (module->Build() < 0)
 	{
-		std::cout << "build failed" << std::endl;
+		std::cout << "Build failed" << std::endl;
 		return -2;
 	}
 	module->SetUserData(&module_file);
@@ -1012,6 +1013,8 @@ int main()
 	std::cout << "Demo finished" << std::endl;
 	bTerminated = true;
 	thread.join();
+	ctx->Release();
+	engine->Release();
 	return 0;
 }
 

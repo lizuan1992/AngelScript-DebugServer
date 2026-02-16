@@ -215,7 +215,7 @@ void SetToStringCallback(asITypeInfo* t, std::function<std::string(const char* n
 
 #pragma region Custom extension instructions
 // Attention!!! The use of the continue instruction within a SWITCH statement will result in behavior exceptions, 
-// which must be done using Continuation and followed by SWITCH-INTINUE outside the statement;
+// which must be done using CONTINUE and followed by SWITCH-INTINUE outside the statement;
 #define SWITCH(_p_) bool _switch_have_continue_instruct=false;for(std::string _cmd_(_p_),_pass_,_cmd_str_list_,_is_print_case_="0",_once_;\
 					_pass_.empty()&&_is_print_case_[0]<='2';\
 					_is_print_case_[0]+=1)
