@@ -186,8 +186,6 @@ static std::string getVariableValue(void* ptr, int typeId, asIScriptEngine* engi
 
 void RegisterDbgToString(asIScriptEngine* engine)
 {
-	// You need to manually change the class member variable attribute to "public"
-
 	static auto Modify = [](const std::string& _str, asETypeModifiers typeMod) -> std::string
 		{
 			if (typeMod == asTM_NONE)
