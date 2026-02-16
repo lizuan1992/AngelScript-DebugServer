@@ -1684,7 +1684,7 @@ void RunDebuggerServer(volatile bool& bTerminated, uint16_t uServerPort)
 					HandleCommandFromVSX(line);
 				}
 
-				ss >> remainData;
+				remainData = ss.str();
 			}
 		}
 	}
