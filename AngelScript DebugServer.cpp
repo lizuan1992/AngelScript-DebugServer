@@ -907,6 +907,7 @@ void MessageCallback(const asSMessageInfo* msg, void* param)
 void as_output(const std::string& str)
 {
 	std::cout << str << std::endl;
+	gDbgSvr.outputDebugText("output", str, false);
 }
 
 int main()
