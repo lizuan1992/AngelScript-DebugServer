@@ -24,7 +24,7 @@ public:
 	DebuggerServer();
 	~DebuggerServer();
 
-	void CheckConnection();
+	void checkConnection();
 
 	bool bind(uint16_t port);
 	bool listen(int backlog = 1);

@@ -111,7 +111,7 @@ DebuggerServer::~DebuggerServer()
 		::shutdown(mMySockfd, SD_BOTH);
 }
 
-void DebuggerServer::CheckConnection()
+void DebuggerServer::checkConnection()
 {
 	if (mSocketVS == SOCKET(-1))
 		return;

@@ -901,6 +901,7 @@ void MessageCallback(const asSMessageInfo* msg, void* param)
 	auto str = std::format("{} {}({},{}) : {}", type, msg->section, msg->row, msg->col, msg->message);
 
 	std::cout << str << std::endl;
+	gDbgSvr.outputDebugText("compiler", str, false);
 }
 
 void as_output(const std::string& str)
