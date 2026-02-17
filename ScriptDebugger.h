@@ -213,6 +213,8 @@ void PrepareExecutionCallback(asIScriptContext* ctx);
 std::string ToJsonString(const char* name, void* value, int typeId, uint32_t start, uint32_t& count, int& size, asIScriptEngine* engine, asETypeModifiers typeMod);
 void SetToStringCallback(asITypeInfo* t, std::function<std::string(const char* name, void* value, int typeId, uint32_t start, uint32_t& count, int& size, asIScriptEngine* engine, asETypeModifiers typeMod)> func);
 
+std::pair<std::string, size_t> GetFileLineByModuleLine(asIScriptModule* module, size_t inLine);
+
 #pragma region Custom extension instructions
 // Attention!!! The use of the continue instruction within a SWITCH statement will result in behavior exceptions, 
 // which must be done using CONTINUE and followed by SWITCH_CONTINUE outside the statement;
@@ -248,5 +250,3 @@ void SetToStringCallback(asITypeInfo* t, std::function<std::string(const char* n
 #include <iostream>
 #define SYS_LOG(s) std::cout << s << std::endl;
 #define DEBUG_LOG(s) std::cout << s << std::endl;
-
-std::pair<std::string, size_t> GetFileLineByModuleLine(asIScriptModule* module, size_t inLine);
