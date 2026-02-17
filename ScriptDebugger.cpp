@@ -1910,7 +1910,7 @@ namespace
 			int nextLine = moduleLine;
 			auto lineEntryCount = function->GetLineEntryCount();
 
-			for (int i = 0; i < lineEntryCount; i++)
+			for (int i = 0, j = lineEntryCount / 2, k = lineEntryCount, c = 0; i < lineEntryCount; i++, c++)
 			{
 				int row = 0;
 				function->GetLineEntry(i, &row, 0, 0, 0);
@@ -1919,6 +1919,21 @@ namespace
 				{
 					nextLine = row;
 					break;
+				}
+				else
+				{
+					int row = 0;
+					function->GetLineEntry(j, &row, 0, 0, 0);
+					if (row <= nextLine)
+					{
+						i = j;
+						j = j + (k - j) / 2;
+					}
+					else
+					{
+						k = j;
+						j = i + (j - i) / 2;
+					}
 				}
 			}
 			size_t occupiedLines = nextLine != moduleLine ? (nextLine - moduleLine) : 1;
@@ -1940,11 +1955,8 @@ namespace
 			{
 				if (breakInfo.mEnabled)
 				{
-					auto condition1 = false;
-					auto condition2 = false;
-
 					auto isLambda1 = function->GetName()[0] == '$';
-					auto isLambda2 = strstr(breakInfo.mFunction.c_str(), "function") || strstr(breakInfo.mFunction.c_str(), "func");
+					auto isLambda2 = breakInfo.mFunction.find("function(") == 0 || breakInfo.mFunction.find("func(") == 0;
 
 					if (((!isLambda1 && !isLambda2) || (isLambda1 && isLambda2)) &&
 						breakLine >= codeLine && breakLine < codeLine + occupiedLines)
