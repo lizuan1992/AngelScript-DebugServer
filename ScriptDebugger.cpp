@@ -1655,8 +1655,8 @@ void RunDebuggerServer(volatile bool& bTerminated, uint16_t uServerPort)
 
 		while (true)
 		{
-			char recvBuffer[4 * 1024];
-			auto recvLength = gDbgSvr.receive(gDbgSvr.mSocketVS, recvBuffer, sizeof(recvBuffer));
+			char recvBuffer[4 * 1024 + 1];
+			auto recvLength = gDbgSvr.receive(gDbgSvr.mSocketVS, recvBuffer, sizeof(recvBuffer) - 1);
 			if (recvLength == -1 || recvLength == 0)
 			{
 				gDbgSvr.closeSocketVS();
