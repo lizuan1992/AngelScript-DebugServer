@@ -341,6 +341,17 @@ namespace
 		return nullptr;
 	}
 
+	auto GetEngineThreadId(asIScriptEngine* engine) -> DWORD
+	{
+		for (auto& [threadId, _engine] : gThreadEngineList)
+		{
+			if (_engine == engine)
+				return threadId;
+		}
+
+		return 0;
+	}
+
 	void ClearBreakpoints()
 	{
 		if (gBreakpointList.size())
@@ -1543,7 +1554,7 @@ std::string ToJsonString(const char* _name, void* value, int typeId, uint32_t st
 				_t = engine->GetTypeInfoByName(t_n);
 			}
 
-			if (auto iter = gDbgSvr.mToStringCallbacks.find(_t); iter != gDbgSvr.mToStringCallbacks.end())
+			if (auto iter = gDbgSvr.mToStringCallbacks[GetEngineThreadId(engine)].find(_t); iter != gDbgSvr.mToStringCallbacks[GetEngineThreadId(engine)].end())
 			{
 				return iter->second(name, value, typeId, start, count, size, engine, typeMod);
 			}
@@ -1608,7 +1619,7 @@ std::string ToJsonString(const char* _name, void* value, int typeId, uint32_t st
 					_t = engine->GetTypeInfoByName(t_n);
 				}
 
-				if (auto iter = gDbgSvr.mToStringCallbacks.find(_t); iter != gDbgSvr.mToStringCallbacks.end())
+				if (auto iter = gDbgSvr.mToStringCallbacks[GetEngineThreadId(engine)].find(_t); iter != gDbgSvr.mToStringCallbacks[GetEngineThreadId(engine)].end())
 					return iter->second(nullptr, value, typeId, start, count, size, engine, typeMod);
 			}
 
@@ -1621,7 +1632,7 @@ std::string ToJsonString(const char* _name, void* value, int typeId, uint32_t st
 
 void SetToStringCallback(asITypeInfo* t, std::function<std::string(const char* name, void* value, int typeId, uint32_t start, uint32_t& count, int& size, asIScriptEngine* engine, asETypeModifiers typeMod)> func)
 {
-	gDbgSvr.mToStringCallbacks[t] = func;
+	gDbgSvr.mToStringCallbacks[GetCurrentThreadId()][t] = func;
 }
 
 void CreateScriptEngineCallback(asIScriptEngine* pScriptEngine)

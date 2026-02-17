@@ -60,5 +60,18 @@ int main()
 		_var;
 	}
 
+	arr.sortDesc();
+
+	array<string> arr2 =
+	{
+		"abc",
+		"def",
+		"ghi"
+	};
+	arr2.sort(function(const string & in a, const string & in b)
+	{
+		return a > b;
+	});
+
 	return 0;
 }

@@ -42,14 +42,14 @@ public:
 	void outputDebugText(const char* category, const std::string& str, bool printToLocalWindow = true);
 	void setToStringCallback(asITypeInfo* t, std::function<std::string(const char* name, void* value, int typeId, uint32_t start, uint32_t& count, int& size, asIScriptEngine* engine, asETypeModifiers typeMod)> func)
 	{
-		mToStringCallbacks[t] = func;
+		mToStringCallbacks[GetCurrentThreadId()][t] = func;
 	}
 
 protected:
 	SOCKET mMySockfd;
 	struct sockaddr_in mLocalAddr;
 	std::mutex mMutex;
-	std::unordered_map<asITypeInfo*, std::function<std::string(const char* name, void* value, int typeId, uint32_t start, uint32_t& count, int& size, asIScriptEngine* engine, asETypeModifiers typeMod)>> mToStringCallbacks;
+	std::unordered_map<DWORD, std::unordered_map<asITypeInfo*, std::function<std::string(const char* name, void* value, int typeId, uint32_t start, uint32_t& count, int& size, asIScriptEngine* engine, asETypeModifiers typeMod)>>> mToStringCallbacks;
 
 public:
 	volatile int mConnectedCount = 0;
