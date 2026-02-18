@@ -1910,30 +1910,25 @@ namespace
 			int nextLine = moduleLine;
 			auto lineEntryCount = function->GetLineEntryCount();
 
-			for (int i = 0, j = lineEntryCount / 2, k = lineEntryCount, c = 0; i < lineEntryCount; i++, c++)
+			for (int i = 0, j = lineEntryCount / 2, k = lineEntryCount, c = 0; c < lineEntryCount; c++)
 			{
 				int row = 0;
-				function->GetLineEntry(i, &row, 0, 0, 0);
-
-				if (row > nextLine)
+				function->GetLineEntry(j, &row, 0, 0, 0);
+				if (row < moduleLine)
 				{
-					nextLine = row;
-					break;
+					i = j;
+					j = j + (k - j) / 2;
+				}
+				else if (row > moduleLine)
+				{
+					k = j;
+					j = i + (j - i) / 2;
 				}
 				else
 				{
-					int row = 0;
-					function->GetLineEntry(j, &row, 0, 0, 0);
-					if (row <= nextLine)
-					{
-						i = j;
-						j = j + (k - j) / 2;
-					}
-					else
-					{
-						k = j;
-						j = i + (j - i) / 2;
-					}
+					function->GetLineEntry(j + 1, &row, 0, 0, 0);
+					nextLine = row;
+					break;
 				}
 			}
 			size_t occupiedLines = nextLine != moduleLine ? (nextLine - moduleLine) : 1;
