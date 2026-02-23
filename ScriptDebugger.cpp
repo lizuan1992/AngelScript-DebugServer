@@ -1554,9 +1554,15 @@ std::string ToJsonString(const char* _name, void* value, int typeId, uint32_t st
 				_t = engine->GetTypeInfoByName(t_n);
 			}
 
-			if (auto iter = gDbgSvr.mToStringCallbacks[GetEngineThreadId(engine)].find(_t); iter != gDbgSvr.mToStringCallbacks[GetEngineThreadId(engine)].end())
+			if (gThreadEngineList.size() > 1)
 			{
-				return iter->second(name, value, typeId, start, count, size, engine, typeMod);
+				if (auto iter = gDbgSvr.mToStringCallbacks[GetEngineThreadId(engine)].find(_t); iter != gDbgSvr.mToStringCallbacks[GetEngineThreadId(engine)].end())
+					return iter->second(name, value, typeId, start, count, size, engine, typeMod);
+			}
+			else
+			{
+				if (auto iter = gDbgSvr.mToStringCallbacks.begin()->second.find(_t); iter != gDbgSvr.mToStringCallbacks.begin()->second.end())
+					return iter->second(name, value, typeId, start, count, size, engine, typeMod);
 			}
 
 			if (auto funcDef = t->GetFuncdefSignature())
@@ -1619,8 +1625,16 @@ std::string ToJsonString(const char* _name, void* value, int typeId, uint32_t st
 					_t = engine->GetTypeInfoByName(t_n);
 				}
 
-				if (auto iter = gDbgSvr.mToStringCallbacks[GetEngineThreadId(engine)].find(_t); iter != gDbgSvr.mToStringCallbacks[GetEngineThreadId(engine)].end())
-					return iter->second(nullptr, value, typeId, start, count, size, engine, typeMod);
+				if (gThreadEngineList.size() > 1)
+				{
+					if (auto iter = gDbgSvr.mToStringCallbacks[GetEngineThreadId(engine)].find(_t); iter != gDbgSvr.mToStringCallbacks[GetEngineThreadId(engine)].end())
+						return iter->second(nullptr, value, typeId, start, count, size, engine, typeMod);
+				}
+				else
+				{
+					if (auto iter = gDbgSvr.mToStringCallbacks.begin()->second.find(_t); iter != gDbgSvr.mToStringCallbacks.begin()->second.end())
+						return iter->second(nullptr, value, typeId, start, count, size, engine, typeMod);
+				}
 			}
 
 			return "";
