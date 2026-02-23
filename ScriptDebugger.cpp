@@ -1940,8 +1940,9 @@ namespace
 				}
 				else
 				{
+					auto _row = row;
 					function->GetLineEntry(j + 1, &row, 0, 0, 0);
-					nextLine = row;
+					nextLine = row > _row ? row : _row + 1;
 					break;
 				}
 			}
