@@ -938,6 +938,26 @@ namespace
 		}
 	}
 
+	void CheckLambdaExpression(BreakpointInfo& bp)
+	{
+		auto& func = bp.mFunction;
+
+		auto pos = 0;
+		if (func.find("function") == 0)
+			pos = 8;
+		else if (func.find("func") == 0)
+			pos = 4;
+
+		if (pos != 0)
+		{
+			while (pos < func.size() && (func[pos] == ' ' || func[pos] == '\t' || func[pos] == '\n'))
+				pos++;
+
+			if (func[pos] == '(')
+				bp.isLambdaExp = true;
+		}
+	};
+
 	void HandleCommandFromVSX(std::string& json)
 	{
 		struct error_check
@@ -1188,6 +1208,7 @@ namespace
 						file.replace(pos, 1, "/");
 
 					CheckConditionBreakpoint(bp);
+					CheckLambdaExpression(bp);
 					gBreakpointList[file][bp.mLine] = std::move(bp);
 
 					BREAK;
@@ -1966,7 +1987,32 @@ namespace
 				if (breakInfo.mEnabled)
 				{
 					auto isLambda1 = function->GetName()[0] == '$';
-					auto isLambda2 = breakInfo.mFunction.find("function(") == 0 || breakInfo.mFunction.find("func(") == 0;
+					auto isLambda2 = breakInfo.isLambdaExp; // The content provided by Visual Studio may not be accurate
+					if (isLambda1 && !isLambda2 && !breakInfo.dynamicJudgment)
+					{
+						breakInfo.dynamicJudgment = true;
+						int begin;
+						function->GetLineEntry(0, &begin, 0, 0, 0);
+						if (true)
+						{
+							auto [t1, t2] = GetFileLineByModuleLine(module, begin);
+							begin = t2;
+						}
+
+						int end;
+						function->GetLineEntry(lineEntryCount - 1, &end, 0, 0, 0);
+						if (true)
+						{
+							auto [t1, t2] = GetFileLineByModuleLine(module, end);
+							end = t2;
+						}
+
+						if (breakInfo.mLine >= begin && breakInfo.mLine <= end)
+						{
+							breakInfo.isLambdaExp = true;
+							isLambda2 = true;
+						}
+					}
 
 					if (((!isLambda1 && !isLambda2) || (isLambda1 && isLambda2)) &&
 						breakLine >= codeLine && breakLine < codeLine + occupiedLines)
