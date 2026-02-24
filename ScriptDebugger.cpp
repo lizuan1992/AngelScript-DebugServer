@@ -1996,7 +1996,7 @@ namespace
 						if (true)
 						{
 							auto [t1, t2] = GetFileLineByModuleLine(module, begin);
-							begin = t2;
+							begin = int(t2);
 						}
 
 						int end;
@@ -2004,7 +2004,7 @@ namespace
 						if (true)
 						{
 							auto [t1, t2] = GetFileLineByModuleLine(module, end);
-							end = t2;
+							end = int(t2);
 						}
 
 						if (breakInfo.mLine >= begin && breakInfo.mLine <= end)
