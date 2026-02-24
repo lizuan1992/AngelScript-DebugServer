@@ -199,7 +199,7 @@ struct BreakpointInfo
 	std::string mConditionExp; //condition expression
 	bool mEnabled;
 
-	bool dynamicJudgment = false;
+	bool dynamicCheck = false;
 	bool isLambdaExp = false;
 	bool conditionValid = false;
 	int  conditionOpCode = -1;

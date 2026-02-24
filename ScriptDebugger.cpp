@@ -1988,9 +1988,9 @@ namespace
 				{
 					auto isLambda1 = function->GetName()[0] == '$';
 					auto isLambda2 = breakInfo.isLambdaExp; // The content provided by Visual Studio may not be accurate
-					if (isLambda1 && !isLambda2 && !breakInfo.dynamicJudgment)
+					if (isLambda1 && !isLambda2 && !breakInfo.dynamicCheck)
 					{
-						breakInfo.dynamicJudgment = true;
+						breakInfo.dynamicCheck = true;
 						int begin;
 						function->GetLineEntry(0, &begin, 0, 0, 0);
 						if (true)
