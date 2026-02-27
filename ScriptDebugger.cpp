@@ -1836,13 +1836,14 @@ namespace
 			return;
 		}
 
-		int moduleLine = ctx->GetLineNumber(0, 0, 0);
-		asIScriptFunction* func = ctx->GetFunction();
+		auto func = ctx->GetFunction();
 		if (func == nullptr)
 		{
 			threadSignal.clearPreWaitingSignal();
 			return;
 		}
+
+		int moduleLine = ctx->GetLineNumber(0, 0, 0);
 
 		auto module = func->GetModule();
 		if (module == nullptr || moduleLine <= 0)
