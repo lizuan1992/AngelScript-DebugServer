@@ -802,6 +802,9 @@ namespace
 		for (asUINT n = 0; n < stackSize; n++)
 		{
 			auto func = ctx->GetFunction(n);
+			if (func == nullptr)
+				continue;
+
 			auto moduleLine = ctx->GetLineNumber(n, 0, 0);
 			auto module = func->GetModule();
 			if (module == nullptr || moduleLine <= 0)
@@ -1834,8 +1837,14 @@ namespace
 		}
 
 		int moduleLine = ctx->GetLineNumber(0, 0, 0);
-		asIScriptFunction* function = ctx->GetFunction();
-		auto module = function->GetModule();
+		asIScriptFunction* func = ctx->GetFunction();
+		if (func == nullptr)
+		{
+			threadSignal.clearPreWaitingSignal();
+			return;
+		}
+
+		auto module = func->GetModule();
 		if (module == nullptr || moduleLine <= 0)
 		{
 			threadSignal.clearPreWaitingSignal();
@@ -1943,12 +1952,12 @@ namespace
 			auto engine = ctx->GetEngine();
 
 			int nextLine = moduleLine;
-			auto lineEntryCount = function->GetLineEntryCount();
+			auto lineEntryCount = func->GetLineEntryCount();
 
 			for (int i = 0, j = lineEntryCount / 2, k = lineEntryCount, c = 0; c < lineEntryCount; c++)
 			{
 				int row = 0;
-				function->GetLineEntry(j, &row, 0, 0, 0);
+				func->GetLineEntry(j, &row, 0, 0, 0);
 				if (row < moduleLine)
 				{
 					i = j;
@@ -1962,7 +1971,7 @@ namespace
 				else
 				{
 					auto _row = row;
-					function->GetLineEntry(j + 1, &row, 0, 0, 0);
+					func->GetLineEntry(j + 1, &row, 0, 0, 0);
 					nextLine = row > _row ? row : _row + 1;
 					break;
 				}
@@ -1975,7 +1984,7 @@ namespace
 				for (int i = 0; i < lineEntryCount; i++)
 				{
 					int row = 0;
-					function->GetLineEntry(i, &row, 0, 0, 0);
+					func->GetLineEntry(i, &row, 0, 0, 0);
 					auto [t1, t2] = GetFileLineByModuleLine(module, row);
 					funcLineEntry.push_back(int(t2));
 				}
@@ -1986,13 +1995,13 @@ namespace
 			{
 				if (breakInfo.mEnabled)
 				{
-					auto isLambda1 = function->GetName()[0] == '$';
+					auto isLambda1 = func->GetName()[0] == '$';
 					auto isLambda2 = breakInfo.isLambdaExp; // The content provided by Visual Studio may not be accurate
 
 					if (isLambda1 && !isLambda2)
 					{
 						int begin;
-						function->GetLineEntry(0, &begin, 0, 0, 0);
+						func->GetLineEntry(0, &begin, 0, 0, 0);
 						if (true)
 						{
 							auto [t1, t2] = GetFileLineByModuleLine(module, begin);
@@ -2000,7 +2009,7 @@ namespace
 						}
 
 						int end;
-						function->GetLineEntry(lineEntryCount - 1, &end, 0, 0, 0);
+						func->GetLineEntry(lineEntryCount - 1, &end, 0, 0, 0);
 						if (true)
 						{
 							auto [t1, t2] = GetFileLineByModuleLine(module, end);
@@ -2022,7 +2031,7 @@ namespace
 							void* ptr = nullptr;
 							int typeId = 0;
 
-							for (asUINT n = function->GetVarCount(); n-- > 0; )
+							for (asUINT n = func->GetVarCount(); n-- > 0; )
 							{
 								const char* varName = 0;
 								ctx->GetVar(n, 0, &varName, &typeId);
