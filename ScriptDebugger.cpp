@@ -1683,10 +1683,16 @@ void CreateScriptEngineCallback(asIScriptEngine* pScriptEngine)
 void RunDebuggerServer(volatile bool& bTerminated, uint16_t uServerPort)
 {
 	if (!gDbgSvr.bind(uServerPort))
-		throw std::runtime_error("Failed to bind debugger server.");
+	{
+		SYS_LOG(std::format("The debugger server failed to bind port {}", uServerPort).c_str());
+		return;
+	}
 
 	if (!gDbgSvr.listen())
-		throw std::runtime_error("Failed to listen on debugger server.");
+	{
+		SYS_LOG("Failed to listen on debugger server.");
+		return;
+	}
 
 	std::string remainData;
 
@@ -1843,7 +1849,7 @@ namespace
 			return;
 		}
 
-		int moduleLine = ctx->GetLineNumber(0, 0, 0);
+		int moduleLine = ctx->GetLineNumber();
 
 		auto module = func->GetModule();
 		if (module == nullptr || moduleLine <= 0)
@@ -2147,7 +2153,7 @@ namespace
 		}
 
 		auto exceptionFunction = ctx->GetExceptionFunction();
-		auto  exceptionLineNumber = ctx->GetExceptionLineNumber(0, 0);
+		auto  exceptionLineNumber = ctx->GetExceptionLineNumber();
 		auto exceptionMessage = ctx->GetExceptionString();
 		auto module = exceptionFunction->GetModule();
 		if (module == nullptr)
