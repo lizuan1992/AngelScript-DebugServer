@@ -234,7 +234,7 @@ void DebuggerServer::outputDebugText(const char* category, const std::string& st
 DebuggerServer gDbgSvr;
 static std::vector<std::pair<int, asIScriptEngine*>> gThreadEngineList;
 static std::unordered_map<int, ThreadInfo> gThreadInfoList;
-static std::unordered_map<std::string, std::unordered_map<size_t, BreakpointInfo>> gBreakpointList;
+static SafeContainer<std::unordered_map<std::string, std::unordered_map<size_t, BreakpointInfo>>> gBreakpointList;
 constexpr auto BASE_DIRECTORY = "Script\\";
 
 namespace
@@ -354,9 +354,9 @@ namespace
 
 	void ClearBreakpoints()
 	{
-		if (gBreakpointList.size())
+		if (gBreakpointList.get()->size())
 		{
-			gBreakpointList.clear();
+			gBreakpointList.get_unique()->clear();
 		}
 
 		for (auto& [threadId, threadInfo] : gThreadInfoList)
@@ -1212,7 +1212,7 @@ namespace
 
 					CheckConditionBreakpoint(bp);
 					CheckLambdaExpression(bp);
-					gBreakpointList[file][bp.mLine] = std::move(bp);
+					(*gBreakpointList.get_unique())[file][bp.mLine] = std::move(bp);
 
 					BREAK;
 				}
@@ -1227,7 +1227,7 @@ namespace
 					for (auto pos = file.find('\\'); pos != std::string::npos; pos = file.find('\\', pos))
 						file.replace(pos, 1, "/");
 
-					gBreakpointList[file].erase(line);
+					(*gBreakpointList.get_unique())[file].erase(line);
 
 					BREAK;
 				}
@@ -1954,7 +1954,8 @@ namespace
 		}
 		}
 
-		if (auto iter = gBreakpointList.find(codeFile); iter != gBreakpointList.end())
+		auto safe_bp_list = gBreakpointList.get();
+		if (auto iter = safe_bp_list->find(codeFile); iter != safe_bp_list->end())
 		{
 			auto engine = ctx->GetEngine();
 
@@ -2126,6 +2127,7 @@ namespace
 						auto str = std::format(event, threadId, codeFile, breakLine);
 						gDbgSvr.send(str);
 
+						safe_bp_list = nullptr;
 						waitingResponse();
 						return;
 					}

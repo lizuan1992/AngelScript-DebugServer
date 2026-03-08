@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../angelscript/sdk/angelscript/include/angelscript.h" //#include "angelscript.h"
+#include "angelscript.h"
 
 #include <string>
 #include <list>
@@ -10,11 +10,43 @@
 #include <filesystem>
 #include <fstream>
 #include <mutex>
+#include <shared_mutex>
 #include <atomic>
 #include <functional>
 #include <winsock2.h>
 #include <ws2tcpip.h>
 #include <mstcpip.h>
+
+template<typename t_n>
+class SafeContainer
+{
+public:
+	auto get()
+	{
+		m_mtx.lock_shared();
+
+		return std::shared_ptr<t_n>(&m_value, [this](t_n*)
+			{
+				m_mtx.unlock_shared();
+			});
+	}
+
+	auto get_unique()
+	{
+		m_mtx.lock();
+
+		auto func = [this](t_n*)
+			{
+				m_mtx.unlock();
+			};
+
+		return std::unique_ptr<t_n, decltype(func)>(&m_value, func);
+	}
+
+private:
+	std::shared_mutex m_mtx;
+	t_n m_value;
+};
 
 class DebuggerServer
 {
