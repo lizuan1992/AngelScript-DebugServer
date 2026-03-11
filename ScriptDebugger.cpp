@@ -101,7 +101,7 @@ std::string StringSymbalUnescape(std::string str)
 
 DebuggerServer::DebuggerServer()
 {
-	mMySockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	mMySockfd = -1;
 	memset(&mLocalAddr, 0, sizeof(mLocalAddr));
 }
 
@@ -134,6 +134,13 @@ void DebuggerServer::checkConnection()
 
 bool DebuggerServer::bind(uint16_t port)
 {
+	if (mMySockfd != SOCKET(-1))
+	{
+		SYS_LOG("Cannot duplicate binding");
+		return false;
+	}
+
+	mMySockfd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	memset(&mLocalAddr, 0, sizeof(mLocalAddr));
 	mLocalAddr.sin_family = AF_INET;
 	mLocalAddr.sin_port = htons(port);
@@ -1694,17 +1701,15 @@ void RunDebuggerServer(volatile bool& bTerminated, uint16_t uServerPort)
 		return;
 	}
 
-	std::string remainData;
+	SYS_LOG("Debugging service has been started");
 
+	std::string remainData;
 	while (!bTerminated)
 	{
 		struct sockaddr_in clientAddr = {};
 		gDbgSvr.mSocketVS = gDbgSvr.accept(clientAddr);
 		if (int(gDbgSvr.mSocketVS) < 0)
-		{
-			SYS_LOG("Stopped debug server");
 			break;
-		}
 
 		SYS_LOG("The Visual Studio connected");
 
@@ -1744,7 +1749,10 @@ void RunDebuggerServer(volatile bool& bTerminated, uint16_t uServerPort)
 		}
 	}
 
+	SYS_LOG("Debugging service has been closed");
+
 	gDbgSvr.closeSocketMy();
+	gBreakpointList.get_unique()->clear();
 
 	for (auto& [threadId, threadInfo] : gThreadInfoList)
 	{
