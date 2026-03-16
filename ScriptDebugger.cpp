@@ -99,6 +99,28 @@ std::string StringSymbolUnescape(std::string str)
 	return str;
 }
 
+std::string Modify(const std::string& _str, asETypeModifiers typeMod)
+{
+	if (typeMod == asTM_NONE)
+		return _str;
+
+	auto str = _str;
+
+	if (typeMod & asTM_CONST)
+		str.insert(0, "const ");
+
+	typeMod = asETypeModifiers(int(typeMod) & 0x03);
+
+	if (typeMod == asTM_INREF)
+		str += " & in";
+	else if (typeMod == asTM_OUTREF)
+		str += " & out";
+	else if (typeMod == asTM_INOUTREF)
+		str += " &";
+
+	return str;
+};
+
 DebuggerServer::DebuggerServer()
 {
 	mMySockfd = -1;
@@ -1328,28 +1350,6 @@ namespace
 
 std::string ToJsonString(const char* _name, void* value, int typeId, uint32_t start, uint32_t& count, int& size, asIScriptEngine* engine, asETypeModifiers typeMod)
 {
-	auto Modify = [](const std::string& _str, asETypeModifiers typeMod)-> std::string
-		{
-			if (typeMod == asTM_NONE)
-				return _str;
-
-			auto str = _str;
-
-			if (typeMod & asTM_CONST)
-				str.insert(0, "const ");
-
-			typeMod = asETypeModifiers(int(typeMod) & 0x03);
-
-			if (typeMod == asTM_INREF)
-				str += " & in";
-			else if (typeMod == asTM_OUTREF)
-				str += " & out";
-			else if (typeMod == asTM_INOUTREF)
-				str += " &";
-
-			return str;
-		};
-
 	constexpr auto variable = JSON_FMT(
 		{
 			"type" : "{}",
