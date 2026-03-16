@@ -1,6 +1,6 @@
 #include "ScriptDebugger.h"
 
-std::string StringSymbalEscape(std::string str)
+std::string StringSymbolEscape(std::string str)
 {
 	// Escape backslash first to avoid double-escaping
 	for (auto pos = str.find("\\"); pos != std::string::npos; pos = str.find("\\", pos + 2))
@@ -53,7 +53,7 @@ std::string StringSymbalEscape(std::string str)
 	return str;
 }
 
-std::string StringSymbalUnescape(std::string str)
+std::string StringSymbolUnescape(std::string str)
 {
 	// Unescape in reverse order to avoid conflicts
 	for (auto pos = str.find("\\\\"); pos != std::string::npos; pos = str.find("\\\\", pos))
@@ -231,7 +231,7 @@ void DebuggerServer::outputDebugText(const char* category, const std::string& st
 				"output" : "{}\n"
 			});
 
-		gDbgSvr.send(std::format(response, StringSymbalEscape(category), StringSymbalEscape(str)));
+		gDbgSvr.send(std::format(response, StringSymbolEscape(category), StringSymbolEscape(str)));
 	}
 
 	if (printToLocalWindow)
@@ -325,7 +325,7 @@ namespace
 					valueEndPos++;
 			}
 
-			return StringSymbalUnescape(json.substr(valueStartPos + 1, valueEndPos - valueStartPos - 1));
+			return StringSymbolUnescape(json.substr(valueStartPos + 1, valueEndPos - valueStartPos - 1));
 		}
 		else
 		{
@@ -394,7 +394,7 @@ namespace
 					"message" : "Invalid frameId"
 				});
 
-			auto str = std::format(response, seq, threadId, stackLevel, addr, typeId, StringSymbalEscape(value));
+			auto str = std::format(response, seq, threadId, stackLevel, addr, typeId, StringSymbolEscape(value));
 			gDbgSvr.send(str);
 			return;
 		}
@@ -464,12 +464,12 @@ namespace
 
 		if (ret == true)
 		{
-			auto str = std::format(response, seq, true, "", threadId, stackLevel, addr, typeId, StringSymbalEscape(value));
+			auto str = std::format(response, seq, true, "", threadId, stackLevel, addr, typeId, StringSymbolEscape(value));
 			gDbgSvr.send(str);
 		}
 		else
 		{
-			auto str = std::format(response, seq, false, "Invalid typeId " + std::to_string(typeId), threadId, stackLevel, addr, typeId, StringSymbalEscape(value));
+			auto str = std::format(response, seq, false, "Invalid typeId " + std::to_string(typeId), threadId, stackLevel, addr, typeId, StringSymbolEscape(value));
 			gDbgSvr.send(str);
 		}
 	}
@@ -490,7 +490,7 @@ namespace
 						"message" : "{}"
 					});
 
-				auto str = std::format(response, seq, threadId, stackLevel, StringSymbalEscape(expression), error);
+				auto str = std::format(response, seq, threadId, stackLevel, StringSymbolEscape(expression), error);
 				gDbgSvr.send(str);
 			};
 
@@ -631,7 +631,7 @@ namespace
 
 					uint32_t count = 0;
 					int size = 0;
-					auto result = ToJsonString(StringSymbalEscape(expression).c_str(), ptr, typeId, 0, count, size, engine, typeMod);
+					auto result = ToJsonString(StringSymbolEscape(expression).c_str(), ptr, typeId, 0, count, size, engine, typeMod);
 
 					constexpr auto response = JSON_LINE_FMT(
 						{
@@ -645,7 +645,7 @@ namespace
 							"result" : {}
 						});
 
-					auto str = std::format(response, seq, threadId, stackLevel, StringSymbalEscape(expression), result);
+					auto str = std::format(response, seq, threadId, stackLevel, StringSymbolEscape(expression), result);
 					gDbgSvr.send(str);
 				}
 				else
@@ -820,7 +820,7 @@ namespace
 			auto [file, line] = GetFileLineByModuleLine(func->GetModule(), moduleLine);
 
 			auto funcName = func->GetDeclaration(true, true, true);
-			auto frameStr = std::format(frame, n, StringSymbalEscape(funcName), file, line);
+			auto frameStr = std::format(frame, n, StringSymbolEscape(funcName), file, line);
 			frames += frameStr;
 
 			frames += ',';
@@ -938,13 +938,13 @@ namespace
 					}
 					DEFAULT()
 					{
-						gDbgSvr.outputDebugText("break_point", "The conditional expression second sub string expects compareSymbal such as \" (= or ==) != >= > <= < \"");
+						gDbgSvr.outputDebugText("break_point", "The conditional expression second sub string expects compareSymbol such as \" (= or ==) != >= > <= < \"");
 						BREAK;
 					}
 				}
 			}
 			else
-				gDbgSvr.outputDebugText("break_point", "The conditional expression expects a foramt \"variableName compareSymbal value\" such as \"xxx >= 5\"");
+				gDbgSvr.outputDebugText("break_point", "The conditional expression expects a foramt \"variableName compareSymbol value\" such as \"xxx >= 5\"");
 		}
 	}
 
@@ -1326,30 +1326,30 @@ namespace
 	}
 }
 
-std::string Modify(const std::string& _str, asETypeModifiers typeMod)
-{
-	if (typeMod == asTM_NONE)
-		return _str;
-
-	auto str = _str;
-
-	if (typeMod & asTM_CONST)
-		str.insert(0, "const ");
-
-	typeMod = asETypeModifiers(int(typeMod) & 0x03);
-
-	if (typeMod == asTM_INREF)
-		str += " & in";
-	else if (typeMod == asTM_OUTREF)
-		str += " & out";
-	else if (typeMod == asTM_INOUTREF)
-		str += " &";
-
-	return str;
-};
-
 std::string ToJsonString(const char* _name, void* value, int typeId, uint32_t start, uint32_t& count, int& size, asIScriptEngine* engine, asETypeModifiers typeMod)
 {
+	auto Modify = [](const std::string& _str, asETypeModifiers typeMod)-> std::string
+		{
+			if (typeMod == asTM_NONE)
+				return _str;
+
+			auto str = _str;
+
+			if (typeMod & asTM_CONST)
+				str.insert(0, "const ");
+
+			typeMod = asETypeModifiers(int(typeMod) & 0x03);
+
+			if (typeMod == asTM_INREF)
+				str += " & in";
+			else if (typeMod == asTM_OUTREF)
+				str += " & out";
+			else if (typeMod == asTM_INOUTREF)
+				str += " &";
+
+			return str;
+		};
+
 	constexpr auto variable = JSON_FMT(
 		{
 			"type" : "{}",
@@ -1540,9 +1540,9 @@ std::string ToJsonString(const char* _name, void* value, int typeId, uint32_t st
 				}
 
 				if (auto nameSpace = t->GetNamespace(); nameSpace && nameSpace[0])
-					return std::format(variable, Modify(std::string(nameSpace) + "::" + t->GetName() + ptr, typeMod), typeId, -1, (int64_t)value, name, StringSymbalEscape(members));
+					return std::format(variable, Modify(std::string(nameSpace) + "::" + t->GetName() + ptr, typeMod), typeId, -1, (int64_t)value, name, StringSymbolEscape(members));
 				else
-					return std::format(variable, Modify(t->GetName() + ptr, typeMod), typeId, -1, (int64_t)value, name, StringSymbalEscape(members));
+					return std::format(variable, Modify(t->GetName() + ptr, typeMod), typeId, -1, (int64_t)value, name, StringSymbolEscape(members));
 			}
 			else
 			{
@@ -1562,7 +1562,7 @@ std::string ToJsonString(const char* _name, void* value, int typeId, uint32_t st
 			{
 				std::string& str = *(std::string*)value;
 
-				return std::format(variable, Modify("string", typeMod), typeId, 0, (int64_t)value, name, StringSymbalEscape(str));
+				return std::format(variable, Modify("string", typeMod), typeId, 0, (int64_t)value, name, StringSymbolEscape(str));
 			}
 
 			std::string ptr;

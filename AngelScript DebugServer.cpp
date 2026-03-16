@@ -26,7 +26,7 @@
 
 #include "ScriptDebugger.h"
 
-static std::string StringSymbalEscape(std::string str)
+static std::string StringSymbolEscape(std::string str)
 {
 	// Escape backslash first to avoid double-escaping
 	for (auto pos = str.find("\\"); pos != std::string::npos; pos = str.find("\\", pos + 2))
@@ -459,7 +459,7 @@ void RegisterDbgToString(asIScriptEngine* engine)
 					size = getElementsSize(elemAddr, elemTypeId, engine);
 
 					auto value_type = std::format("dictionaryValue<{}>", getTypeName(elemTypeId, engine));
-					return std::format(variable, Modify(value_type + handlePtr, typeMod), typeId, size, (int64_t)value, name, StringSymbalEscape(valueStr));
+					return std::format(variable, Modify(value_type + handlePtr, typeMod), typeId, size, (int64_t)value, name, StringSymbolEscape(valueStr));
 				}
 				else
 				{
@@ -501,7 +501,7 @@ void RegisterDbgToString(asIScriptEngine* engine)
 						auto key_value = std::format("{} : {}", dic_key.c_str(), valueStr);
 
 						auto iter_type = std::format("dictionaryIter<{}>", getTypeName(elemTypeId, engine));
-						return std::format(variable, Modify(iter_type + handlePtr, typeMod), typeId, size, (int64_t)value, name, StringSymbalEscape(key_value));
+						return std::format(variable, Modify(iter_type + handlePtr, typeMod), typeId, size, (int64_t)value, name, StringSymbolEscape(key_value));
 					}
 					else
 					{
@@ -635,7 +635,7 @@ void RegisterDbgToString(asIScriptEngine* engine)
 					{
 						auto valueStr = getVariableValue(childAddr, childTypeId, engine);
 						size = getElementsSize(childAddr, childTypeId, engine);
-						return std::format(variable, Modify(typyName, typeMod), typeId, size, (int64_t)value, name, StringSymbalEscape(valueStr));
+						return std::format(variable, Modify(typyName, typeMod), typeId, size, (int64_t)value, name, StringSymbolEscape(valueStr));
 					}
 					else
 					{
@@ -676,7 +676,7 @@ void RegisterDbgToString(asIScriptEngine* engine)
 						{
 							auto valueStr = getVariableValue(childAddr, childTypeId, engine);
 							size = getElementsSize(childAddr, childTypeId, engine);
-							return std::format(variable, Modify(typyName, typeMod), typeId, size, (int64_t)value, name, StringSymbalEscape(valueStr));
+							return std::format(variable, Modify(typyName, typeMod), typeId, size, (int64_t)value, name, StringSymbolEscape(valueStr));
 						}
 						else
 						{
@@ -718,7 +718,7 @@ void RegisterDbgToString(asIScriptEngine* engine)
 					{
 						auto valueStr = getVariableValue(childAddr, childTypeId, engine);
 						size = getElementsSize(childAddr, childTypeId, engine);
-						return std::format(variable, Modify(typyName, typeMod), typeId, size, (int64_t)value, name, StringSymbalEscape(valueStr));
+						return std::format(variable, Modify(typyName, typeMod), typeId, size, (int64_t)value, name, StringSymbolEscape(valueStr));
 					}
 					else
 					{
@@ -754,7 +754,7 @@ void RegisterDbgToString(asIScriptEngine* engine)
 				{
 					auto valueStr = getVariableValue(elemAddr, childTypeId, engine);
 					size = getElementsSize(elemAddr, childTypeId, engine);
-					return std::format(variable, Modify(typyName, typeMod), typeId, size, (int64_t)value, name, StringSymbalEscape(valueStr));
+					return std::format(variable, Modify(typyName, typeMod), typeId, size, (int64_t)value, name, StringSymbolEscape(valueStr));
 				}
 				else
 				{
@@ -882,7 +882,7 @@ void RegisterDbgToString(asIScriptEngine* engine)
 				{
 					auto str = std::format(variable, "int", 0, 0, (int64_t)&ptr->refCount, "refCount", ptr->refCount);
 					str += ",";
-					str += std::format(variable, "std::string", 0, 0, (int64_t)&ptr->currentPath, "currentPath", StringSymbalEscape(ptr->currentPath));
+					str += std::format(variable, "std::string", 0, 0, (int64_t)&ptr->currentPath, "currentPath", StringSymbolEscape(ptr->currentPath));
 					return str;
 				}
 
