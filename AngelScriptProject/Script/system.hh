@@ -176,7 +176,7 @@ struct string
 	//扩展类对象方法
 	string takeSubStr(const string& 分割符);
 	void replace(const string& 欲替换的字符串, const string& 替换为的字符串);
-	int count(const string& 子串);
+	int count(const string& 子串) const;
 
 	assume null_t operator=(null_t) = delete;
 	assume string(const std::Function<void(void)>&);
@@ -189,7 +189,7 @@ string join(const array<string>& 字符串数组, const string& 分割符);
 template<typename... type>
 uint scan(const string& str, type& ...);
 
-//示例 string result = format("{} {} {}", 123, true, 'hello'); result = "123 true hello"
+//示例 string result = format("{} {} {}", 123, true, 'hello'); // result = "123 true hello"
 template<typename... type>
 string format(const string& fmt, const type& ...);
 
@@ -316,7 +316,7 @@ struct datetime
 	uint get_second() const;
 	bool setDate(uint year, uint month, uint day);
 	bool setTime(uint hour, uint minute, uint second);
-	uint64 toTimeStamp(); //扩展 转时间戳
+	uint64 toTimeStamp() const; //扩展 转时间戳
 
 	datetime& operator= (const datetime&);
 	datetime& operator() (const datetime&);
@@ -635,3 +635,6 @@ TypeExclude(datetime);
 #define or ||
 //逻辑异或
 #define xor ^
+
+//指明属性访问
+#define property
