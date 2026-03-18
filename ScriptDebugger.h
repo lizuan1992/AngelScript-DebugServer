@@ -48,10 +48,12 @@ private:
 	t_n m_value;
 };
 
+typedef std::string(ToJsonStringFT)(const char* name, void* value, int typeId, uint32_t start, uint32_t& count, int& size, asIScriptEngine* engine, asETypeModifiers typeMod);
+
 class DebuggerServer
 {
 	friend std::string ToJsonString(const char* name, void* value, int typeId, uint32_t start, uint32_t& count, int& size, asIScriptEngine* engine, asETypeModifiers typeMod);
-	friend void SetToStringCallback(asITypeInfo* t, std::function<std::string(const char* name, void* value, int typeId, uint32_t start, uint32_t& count, int& size, asIScriptEngine* engine, asETypeModifiers typeMod)> func);
+	friend void SetToStringCallback(asITypeInfo* t, ToJsonStringFT* func);
 public:
 	DebuggerServer();
 	~DebuggerServer();
@@ -72,7 +74,7 @@ public:
 	int receive(SOCKET socket, void* buffer, size_t length) const;
 
 	void outputDebugText(const char* category, const std::string& str, bool printToLocalWindow = true);
-	void setToStringCallback(asITypeInfo* t, std::function<std::string(const char* name, void* value, int typeId, uint32_t start, uint32_t& count, int& size, asIScriptEngine* engine, asETypeModifiers typeMod)> func)
+	void setToStringCallback(asITypeInfo* t, ToJsonStringFT* func)
 	{
 		mToStringCallbacks[GetCurrentThreadId()][t] = func;
 	}
@@ -81,7 +83,7 @@ protected:
 	SOCKET mMySockfd;
 	struct sockaddr_in mLocalAddr;
 	std::mutex mMutex;
-	std::unordered_map<DWORD, std::unordered_map<asITypeInfo*, std::function<std::string(const char* name, void* value, int typeId, uint32_t start, uint32_t& count, int& size, asIScriptEngine* engine, asETypeModifiers typeMod)>>> mToStringCallbacks;
+	std::unordered_map<DWORD, std::unordered_map<asITypeInfo*, ToJsonStringFT*>> mToStringCallbacks;
 
 public:
 	volatile int mConnectedCount = 0;
@@ -244,7 +246,7 @@ void RunDebuggerServer(volatile bool& bTerminated, uint16_t uServerPort);
 void PrepareExecutionCallback(asIScriptContext* ctx);
 
 std::string ToJsonString(const char* name, void* value, int typeId, uint32_t start, uint32_t& count, int& size, asIScriptEngine* engine, asETypeModifiers typeMod);
-void SetToStringCallback(asITypeInfo* t, std::function<std::string(const char* name, void* value, int typeId, uint32_t start, uint32_t& count, int& size, asIScriptEngine* engine, asETypeModifiers typeMod)> func);
+void SetToStringCallback(asITypeInfo* t, ToJsonStringFT* func);
 
 std::pair<std::string, size_t> GetFileLineByModuleLine(asIScriptModule* module, size_t inLine);
 

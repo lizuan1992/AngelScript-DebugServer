@@ -211,7 +211,7 @@ void RegisterDbgToString(asIScriptEngine* engine)
 #define	STR(s) #s
 #define	JSON_FMT(...) STR({)STR(__VA_ARGS__)STR(});
 
-	constexpr auto variable = JSON_FMT(
+	static constexpr auto variable = JSON_FMT(
 		{
 			"type" : "{}",
 			"typeId" : {},
@@ -221,7 +221,7 @@ void RegisterDbgToString(asIScriptEngine* engine)
 			"value" : "{}"
 		});
 
-	constexpr auto variableArr = JSON_FMT(
+	static constexpr auto variableArr = JSON_FMT(
 		{
 			"type" : "{}",
 			"typeId" : {},

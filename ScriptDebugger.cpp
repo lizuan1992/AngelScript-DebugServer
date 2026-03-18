@@ -1675,7 +1675,7 @@ std::string ToJsonString(const char* _name, void* value, int typeId, uint32_t st
 	return std::format(variable, "NotImpl", typeId, 0, (int64_t)value, name, "NotImpl");
 }
 
-void SetToStringCallback(asITypeInfo* t, std::function<std::string(const char* name, void* value, int typeId, uint32_t start, uint32_t& count, int& size, asIScriptEngine* engine, asETypeModifiers typeMod)> func)
+void SetToStringCallback(asITypeInfo* t, ToJsonStringFT* func)
 {
 	gDbgSvr.mToStringCallbacks[GetCurrentThreadId()][t] = func;
 }
