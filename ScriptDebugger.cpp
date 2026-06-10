@@ -1685,6 +1685,19 @@ void CreateScriptEngineCallback(asIScriptEngine* pScriptEngine)
 	int threadId = GetCurrentThreadId();
 	gThreadEngineList.emplace_back(threadId, pScriptEngine);
 	gThreadInfoList[threadId];
+
+	pScriptEngine->SetContextCallbacks(
+		[](asIScriptEngine* pScriptEngine, void* param)->asIScriptContext*
+		{
+			auto pScrCtx = pScriptEngine->CreateContext();
+			PrepareExecutionCallback(pScrCtx);
+			return pScrCtx;
+		},
+		[](asIScriptEngine* pScriptEngine, asIScriptContext* pScrCtx, void* param)
+		{
+			pScrCtx->Release();
+		},
+		nullptr);
 }
 
 void RunDebuggerServer(volatile bool& bTerminated, uint16_t uServerPort)
