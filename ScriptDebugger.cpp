@@ -1677,11 +1677,19 @@ std::string ToJsonString(const char* _name, void* value, int typeId, uint32_t st
 
 void SetToStringCallback(asITypeInfo* t, ToJsonStringFT* func)
 {
+	static std::mutex mutex;
+	mutex.lock();
+
 	gDbgSvr.mToStringCallbacks[GetCurrentThreadId()][t] = func;
+
+	mutex.unlock();
 }
 
 void CreateScriptEngineCallback(asIScriptEngine* pScriptEngine)
 {
+	static std::mutex mutex;
+	mutex.lock();
+
 	int threadId = GetCurrentThreadId();
 	gThreadEngineList.emplace_back(threadId, pScriptEngine);
 	gThreadInfoList[threadId];
@@ -1698,10 +1706,15 @@ void CreateScriptEngineCallback(asIScriptEngine* pScriptEngine)
 			pScrCtx->Release();
 		},
 		nullptr);
+
+	mutex.unlock();
 }
 
 void RunDebuggerServer(volatile bool& bTerminated, uint16_t uServerPort)
 {
+	static std::mutex mutex;
+	mutex.lock();
+
 	if (!gDbgSvr.bind(uServerPort))
 	{
 		SYS_LOG(std::format("The debugger server failed to bind port {}", uServerPort).c_str());
@@ -1772,6 +1785,8 @@ void RunDebuggerServer(volatile bool& bTerminated, uint16_t uServerPort)
 		threadInfo.command = VisualStudioCommand::VS_COMMAND_CONTINUE;
 		threadInfo.signal.setSignal();
 	}
+
+	mutex.unlock();
 }
 
 namespace
