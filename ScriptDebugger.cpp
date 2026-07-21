@@ -200,7 +200,7 @@ void DebuggerServer::closeSocket(SOCKET socket)
 
 void DebuggerServer::closeSocketVS()
 {
-	mMutex.lock();
+	std::unique_lock<std::mutex> lock(mMutex);
 
 	if (mSocketVS != -1)
 	{
@@ -208,13 +208,11 @@ void DebuggerServer::closeSocketVS()
 		::closesocket(mSocketVS);
 		mSocketVS = -1;
 	}
-
-	mMutex.unlock();
 }
 
 void DebuggerServer::closeSocketMy()
 {
-	mMutex.lock();
+	std::unique_lock<std::mutex> lock(mMutex);
 
 	if (mMySockfd != -1)
 	{
@@ -222,21 +220,23 @@ void DebuggerServer::closeSocketMy()
 		::closesocket(mMySockfd);
 		mMySockfd = -1;
 	}
-
-	mMutex.unlock();
 }
 
-int DebuggerServer::send(const std::string& str) const
+int DebuggerServer::send(const std::string& str)
 {
+	std::unique_lock<std::mutex> lock(mMutex);
+
 	return ::send(mSocketVS, str.c_str(), int(str.size()), 0);
 }
 
-int DebuggerServer::send(SOCKET socket, const void* buffer, size_t length) const
+int DebuggerServer::send(SOCKET socket, const void* buffer, size_t length)
 {
+	std::unique_lock<std::mutex> lock(mMutex);
+
 	return ::send(socket, (char*)buffer, int(length), 0);
 }
 
-int DebuggerServer::receive(SOCKET socket, void* buffer, size_t length) const
+int DebuggerServer::receive(SOCKET socket, void* buffer, size_t length)
 {
 	return ::recv(socket, (char*)buffer, int(length), 0);
 }

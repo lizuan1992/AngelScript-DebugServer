@@ -69,9 +69,9 @@ public:
 	void closeSocketVS();
 	void closeSocketMy();
 
-	int send(const std::string& str) const;
-	int send(SOCKET socket, const void* buffer, size_t length) const;
-	int receive(SOCKET socket, void* buffer, size_t length) const;
+	int send(const std::string& str);
+	int send(SOCKET socket, const void* buffer, size_t length);
+	int receive(SOCKET socket, void* buffer, size_t length);
 
 	void outputDebugText(const char* category, const std::string& str, bool printToLocalWindow = true);
 	void setToStringCallback(asITypeInfo* t, ToJsonStringFT* func)
