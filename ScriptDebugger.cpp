@@ -1343,7 +1343,9 @@ namespace
 		}
 		catch (...)
 		{
-			SYS_LOG("The script debugger encountered an exception");
+			gDbgSvr.closeSocketVS();
+			json = "The script debugger encountered an exception = " + json;
+			SYS_LOG(json.c_str());
 		}
 	}
 }
@@ -1769,6 +1771,9 @@ void RunDebuggerServer(volatile bool& bTerminated, uint16_t uServerPort)
 #endif
 					HandleCommandFromVSX(line);
 				}
+
+				if (gDbgSvr.mSocketVS == SOCKET(-1))
+					break;
 
 				remainData = ss.str().substr(ss.tellg());
 			}
