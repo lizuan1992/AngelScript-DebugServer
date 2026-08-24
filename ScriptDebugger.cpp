@@ -264,6 +264,7 @@ DebuggerServer gDbgSvr;
 static std::vector<std::pair<int, asIScriptEngine*>> gThreadEngineList;
 static std::unordered_map<int, ThreadInfo> gThreadInfoList;
 static SafeContainer<std::unordered_map<std::string, std::unordered_map<size_t, BreakpointInfo>>> gBreakpointList;
+static time_t gBreakpointTime = 0;
 constexpr auto BASE_DIRECTORY = "Script\\";
 
 namespace
@@ -970,26 +971,6 @@ namespace
 		}
 	}
 
-	void CheckLambdaExpression(BreakpointInfo& bp)
-	{
-		auto& func = bp.mFunction;
-
-		auto pos = 0;
-		if (func.find("function") == 0)
-			pos = 8;
-		else if (func.find("func") == 0)
-			pos = 4;
-
-		if (pos != 0)
-		{
-			while (pos < func.size() && (func[pos] == ' ' || func[pos] == '\t' || func[pos] == '\n'))
-				pos++;
-
-			if (func[pos] == '(')
-				bp.isLambdaExp = true;
-		}
-	};
-
 	void HandleCommandFromVSX(std::string& json)
 	{
 		struct error_check
@@ -1240,7 +1221,7 @@ namespace
 						file.replace(pos, 1, "/");
 
 					CheckConditionBreakpoint(bp);
-					CheckLambdaExpression(bp);
+					gBreakpointTime = time(nullptr);
 					(*gBreakpointList.get_unique())[file][bp.mLine] = std::move(bp);
 
 					BREAK;
@@ -1899,6 +1880,40 @@ namespace
 			return;
 		}
 
+		if (module->GetUserData(0xff00ff00) != (void*)gBreakpointTime)
+		{
+			module->SetUserData((void*)gBreakpointTime, 0xff00ff00);
+			int functionCount = module->GetFunctionCount();
+
+			for (int i = 0; i < functionCount; i++)
+			{
+				auto funcLambda = module->GetFunctionByIndex(i);
+
+				if (auto name = funcLambda->GetName(); name && name[0] == '$')
+				{
+					int beginLine = 0, endLine = 0;
+					funcLambda->GetLineEntry(0, &beginLine, 0, 0, 0);
+					funcLambda->GetLineEntry(funcLambda->GetLineEntryCount() - 1, &endLine, 0, 0, 0);
+
+					auto [fileName, fileBeginLine] = GetFileLineByModuleLine(module, beginLine);
+					auto fileEndLine = endLine - beginLine + fileBeginLine;
+
+					auto safe_bp_list = gBreakpointList.get();
+					if (auto iter = safe_bp_list->find(fileName); iter != safe_bp_list->end())
+					{
+						for (auto& [breakLine, breakInfo] : iter->second)
+						{
+							if (!breakInfo.isLambdaExp)
+							{
+								if (breakInfo.mLine >= fileBeginLine && breakInfo.mLine <= fileEndLine)
+									breakInfo.isLambdaExp = true;
+							}
+						}
+					}
+				}
+			}
+		}
+
 		auto [codeFile, codeLine] = GetFileLineByModuleLine(module, moduleLine);
 
 		auto waitingResponse = [&]()
@@ -2045,32 +2060,7 @@ namespace
 				if (breakInfo.mEnabled)
 				{
 					auto isLambda1 = func->GetName()[0] == '$';
-					auto isLambda2 = breakInfo.isLambdaExp; // The content provided by Visual Studio may not be accurate
-
-					if (isLambda1 && !isLambda2)
-					{
-						int begin;
-						func->GetLineEntry(0, &begin, 0, 0, 0);
-						if (true)
-						{
-							auto [t1, t2] = GetFileLineByModuleLine(module, begin);
-							begin = int(t2);
-						}
-
-						int end;
-						func->GetLineEntry(lineEntryCount - 1, &end, 0, 0, 0);
-						if (true)
-						{
-							auto [t1, t2] = GetFileLineByModuleLine(module, end);
-							end = int(t2);
-						}
-
-						if (breakInfo.mLine >= begin && breakInfo.mLine <= end)
-						{
-							breakInfo.isLambdaExp = true;
-							isLambda2 = true;
-						}
-					}
+					auto isLambda2 = breakInfo.isLambdaExp;
 
 					if (((!isLambda1 && !isLambda2) || (isLambda1 && isLambda2)) &&
 						breakLine >= codeLine && breakLine < codeLine + occupiedLines)
